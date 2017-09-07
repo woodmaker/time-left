@@ -1,29 +1,29 @@
 import time
 
+def print_time(hour, minute, second):
+    print("{:0>2d}:{:0>2d}:{:0>2d}".format(hour, minute, second), 
+            end="\r")
+
 while(True):
-    a = time.asctime()
+    now = time.localtime()
 
-    hours = int(a[11:13])
-    minutes = int(a[14:16])
-    seconds = int(a[17:19])
+    hour_now = now.tm_hour
+    min_now = now.tm_min
+    sec_now = now.tm_sec
 
-    hr, mr = 0, 0
-    if(hours<6 or hours==6 and minutes<15):
-        hr = 6-hours
-    elif(
-            (hours>=6 and minutes>15 or hours>6)
-            and (hours<22 or hours==22 and minutes<15)
-            ):
-        hr = 22-hours
-    else:
-        hr = 30-hours
-    sr = 60-seconds
-    
-    mr = 15-minutes
-    if mr<0:
-        hr -= 1
-        mr += 60
-    
-    print("{}:{}:{}      ".format(hr, mr, sr), end="\r")
+    hour_rem = 0
+    for shift_end in range(6, 31, 8):
+        if(hour_now<shift_end or hour_now==shift_end and min_now<15):
+            hour_rem = shift_end-hour_now
+            break
 
+    sec_rem = (60-sec_now)%60
+    min_rem = 14-min_now
+    if sec_rem==0:
+        min_rem += 1
+    if min_rem<0:
+        hour_rem -= 1
+        min_rem += 60
+
+    print_time(hour_rem, min_rem, sec_rem)
     time.sleep(1)
